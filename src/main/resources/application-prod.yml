@@ -1,0 +1,45 @@
+
+server:
+  port: ${PORT:8080}
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+  jpa:
+    show-sql: false
+
+# Configuración de las APIs externas
+external:
+  api1:
+    url: https://api1.prod.com
+    key: prod-api-key-1
+  api2:
+    url: https://api2.prod.com
+    key: prod-api-key-2
+  api3:
+    url: https://api3.prod.com
+    key: prod-api-key-3
+
+# Configuración de logs para producción
+logging:
+  level:
+    root: info
+    org.springframework.web: warn
+  file:
+    name: logs/application-prod.log
+
+## Seguridad
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health, info # Solo expone ciertos endpoints
+#  security:
+#    enabled: true

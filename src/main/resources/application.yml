@@ -1,0 +1,17 @@
+
+#Concifuracion de la base de datos
+# Perfiles
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod}
+
+
+# Configuracion de logger
+# Para desarrollo y tambien para produccion
+#logging:
+#  level:
+#    root: info
+#    org:
+#      springframework: debug
+#  file:
+#    name: logs/application.log
