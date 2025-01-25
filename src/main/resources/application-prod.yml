@@ -1,4 +1,3 @@
-
 server:
   port: ${PORT:8080}
 spring:
@@ -9,11 +8,17 @@ spring:
     url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
-    hikari:
-      maximum-pool-size: 5
-      minimum-idle: 2
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true
+    hikari:
+      connection-timeout: 30000
 
 # Configuración de las APIs externas
 external:
@@ -34,12 +39,3 @@ logging:
     org.springframework.web: warn
   file:
     name: logs/application-prod.log
-
-## Seguridad
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health, info # Solo expone ciertos endpoints
-#  security:
-#    enabled: true

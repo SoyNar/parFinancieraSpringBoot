@@ -5,9 +5,9 @@ server:
 # Configuración de la base de datos
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: ${URL}
+    username: ${USER_NAME}
+    password: ${PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
