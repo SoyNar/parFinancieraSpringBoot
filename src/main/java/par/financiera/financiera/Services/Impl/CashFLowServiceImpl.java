@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import par.financiera.financiera.Domain.CashFlow;
 import par.financiera.financiera.Domain.Categories;
 import par.financiera.financiera.Domain.Dtos.RequestDto.RegisterCashFlowRequestDto;
-import par.financiera.financiera.Domain.Dtos.ResponseDto.GetExpensesResponse;
+import par.financiera.financiera.Domain.Dtos.ResponseDto.GetCashResponse;
 import par.financiera.financiera.Domain.Dtos.ResponseDto.RegisterCashFlowResponseDto;
 import par.financiera.financiera.Domain.User;
 import par.financiera.financiera.Exceptions.ExceptionClass.InvalidRequestException;
@@ -128,7 +128,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
     }
 
     @Override
-    public List<GetExpensesResponse> getExpenses(Long userId) {
+    public List<GetCashResponse> getExpenses(Long userId, String month) {
 
 
         //validar si el usuario existe
@@ -137,7 +137,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
 
 
              //buscar gastos por id de usuario
-        List<CashFlow> expenses = cashFlowRepository.findByUserIdAndType(userId, TypeCash.EXPENSES);
+        List<CashFlow> expenses = cashFlowRepository.findByUserIdAndTypeAndMonth(userId, TypeCash.EXPENSES,month);
 
 
         //buscar expendes del usuario
@@ -145,7 +145,37 @@ public class CashFLowServiceImpl  implements ICashFlowService {
             throw  new UserNotFoundException("El usuario no tiene gastos registrados");
         }
         return expenses.stream()
-                .map(expense -> GetExpensesResponse.builder()
+                .map(expense -> GetCashResponse.builder()
+
+                        .title(expense.getTitle())
+                        .categoryId(expense.getCategories().getId())
+                        .date(expense.getDate())
+                        .amount(expense.getAmount())
+                        .userId(expense.getUser().getId())
+                        .build()
+
+                )
+                .toList();
+    }
+
+    @Override
+    public List<GetCashResponse> getIncome(Long userId,String month) {
+        //validar si el usuario existe
+        this.userRepository.findById(userId).orElseThrow(()
+                -> new UserNotFoundException("Usuario no encontrado"));
+
+
+        //buscar gastos por id de usuario
+        List<CashFlow> expenses = cashFlowRepository.findByUserIdAndTypeAndMonth(userId, TypeCash.INCOME,month);
+
+
+        //buscar expendes del usuario
+        if(expenses.isEmpty()){
+            throw  new UserNotFoundException("El usuario no tiene Ingresos registrados");
+        }
+        return expenses.stream()
+                .map(expense -> GetCashResponse.builder()
+
                         .title(expense.getTitle())
                         .categoryId(expense.getCategories().getId())
                         .date(expense.getDate())

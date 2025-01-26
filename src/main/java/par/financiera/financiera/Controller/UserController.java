@@ -105,9 +105,21 @@ public class UserController {
             description = "Aqui puedes obtener los gastos de un usuario",
             tags = {"Get,expenses"}
     )
-    @GetMapping("/expenses/{id}")
-    public ResponseEntity<List<GetExpensesResponse>> getExpensesByUser(@PathVariable Long id){
-        List<GetExpensesResponse> expensesResponse = this.cashFlowService.getExpenses(id);
+    @GetMapping("/expenses/{id}/{month}")
+    public ResponseEntity<List<GetCashResponse>> getExpensesByUser(@PathVariable Long id, @PathVariable String month){
+        List<GetCashResponse> expensesResponse = this.cashFlowService.getExpenses(id, month);
         return ResponseEntity.status(HttpStatus.OK).body(expensesResponse);
+    }
+
+    @Operation(
+            summary = "Obtener Ingresos por usuario",
+            description = "Aqui puedes obtener los Ingresos de un usuario",
+            tags = {"Get,income"}
+    )
+    @GetMapping("/income/{id}/{month}")
+    public ResponseEntity<List<GetCashResponse>> getIncomeByUserAndMonth(@PathVariable Long id, @PathVariable String month){
+        List<GetCashResponse> getIncome = this.cashFlowService.getIncome(id,month);
+         return ResponseEntity.status(HttpStatus.OK).body(getIncome);
+
     }
 }

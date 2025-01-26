@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-public class GetExpensesResponse {
+public class GetCashResponse {
 
     private String title;
     private double amount;
