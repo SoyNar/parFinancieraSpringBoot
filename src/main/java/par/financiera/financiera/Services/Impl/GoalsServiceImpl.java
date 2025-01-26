@@ -1,6 +1,7 @@
 package par.financiera.financiera.Services.Impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import par.financiera.financiera.Domain.Dtos.RequestDto.GoalsRequestDto;
 import par.financiera.financiera.Domain.Dtos.ResponseDto.GoalResponseDto;
 import par.financiera.financiera.Domain.Goals;
@@ -24,7 +25,7 @@ public class GoalsServiceImpl implements IGoalsService {
         this.userRepository = userRepository;
     }
 
-
+    @Transactional
     @Override
     public GoalResponseDto createGoals(GoalsRequestDto requestDto) {
 

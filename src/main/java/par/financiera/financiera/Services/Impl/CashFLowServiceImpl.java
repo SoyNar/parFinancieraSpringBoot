@@ -2,6 +2,7 @@ package par.financiera.financiera.Services.Impl;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import par.financiera.financiera.Domain.CashFlow;
 import par.financiera.financiera.Domain.Categories;
 import par.financiera.financiera.Domain.Dtos.RequestDto.RegisterCashFlowRequestDto;
@@ -31,6 +32,8 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         this.categoryRepository = categoryRepository;
     }
 
+
+    @Transactional
     @Override
     public RegisterCashFlowResponseDto registerIncome(RegisterCashFlowRequestDto requestDto) {
         //validar que el request no este vacio
@@ -77,6 +80,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         return covertToDtoResponse(cashFlow);
     }
 
+    @Transactional
     @Override
     public RegisterCashFlowResponseDto registerExpense(RegisterCashFlowRequestDto requestDto) {
 
@@ -127,6 +131,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         return covertToDtoResponse(cashFlow);
     }
 
+    @Transactional
     @Override
     public List<GetCashResponse> getExpenses(Long userId, String month) {
 
@@ -158,6 +163,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public List<GetCashResponse> getIncome(Long userId,String month) {
         //validar si el usuario existe

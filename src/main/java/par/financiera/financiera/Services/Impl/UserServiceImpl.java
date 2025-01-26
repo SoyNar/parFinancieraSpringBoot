@@ -4,6 +4,7 @@ package par.financiera.financiera.Services.Impl;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import par.financiera.financiera.Domain.Dtos.RequestDto.RegisterUserRequestDto;
 import par.financiera.financiera.Domain.Dtos.ResponseDto.RegisterUserResponseDto;
 import par.financiera.financiera.Domain.User;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-
+    @Transactional
     @Override
     public RegisterUserResponseDto registerUser(RegisterUserRequestDto requestDto) {
             if(this.userRepository.findByEmail(requestDto.getEmail()).isPresent()) {

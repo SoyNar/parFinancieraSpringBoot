@@ -9,30 +9,18 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     show-sql: true
-    hikari:
-      connection-timeout: 30000
 
-# Configuración de las APIs externas
-external:
-  api1:
-    url: https://api1.prod.com
-    key: prod-api-key-1
-  api2:
-    url: https://api2.prod.com
-    key: prod-api-key-2
-  api3:
-    url: https://api3.prod.com
-    key: prod-api-key-3
-
-# Configuración de logs para producción
 logging:
   level:
     root: info
