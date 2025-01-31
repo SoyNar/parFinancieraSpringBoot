@@ -33,7 +33,7 @@ public class CashFlow {
     //un ingreso o gasto tiene una categoria
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id",nullable = false)
     private Categories categories;
 
 

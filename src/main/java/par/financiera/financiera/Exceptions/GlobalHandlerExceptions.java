@@ -1,10 +1,10 @@
 package par.financiera.financiera.Exceptions;
 
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import par.financiera.financiera.Exceptions.ExceptionClass.CashFlowNotFound;
 import par.financiera.financiera.Exceptions.ExceptionClass.InvalidRequestException;
 import par.financiera.financiera.Exceptions.ExceptionClass.ModelNotFounExcceptions;
 import par.financiera.financiera.Exceptions.ExceptionClass.UserNotFoundException;
@@ -39,6 +39,16 @@ public class GlobalHandlerExceptions {
     public ResponseEntity<ErrorResponse> handlerModelNotFoundException(ModelNotFounExcceptions exception){
         ErrorResponse errors = ErrorResponse.builder()
                 .error("NO ENCONTRADO")
+                .message(exception.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CashFlowNotFound.class)
+    public ResponseEntity<ErrorResponse> handlerModelNotFoundException(CashFlowNotFound exception){
+        ErrorResponse errors = ErrorResponse.builder()
+                .error("CASH_NOT_FOUND")
                 .message(exception.getMessage())
                 .status(HttpStatus.NOT_FOUND.value())
                 .build();

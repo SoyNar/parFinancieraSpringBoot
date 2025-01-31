@@ -9,6 +9,7 @@ import par.financiera.financiera.Domain.Dtos.RequestDto.RegisterCashFlowRequestD
 import par.financiera.financiera.Domain.Dtos.ResponseDto.GetCashResponse;
 import par.financiera.financiera.Domain.Dtos.ResponseDto.RegisterCashFlowResponseDto;
 import par.financiera.financiera.Domain.User;
+import par.financiera.financiera.Exceptions.ExceptionClass.CashFlowNotFound;
 import par.financiera.financiera.Exceptions.ExceptionClass.InvalidRequestException;
 import par.financiera.financiera.Exceptions.ExceptionClass.UserNotFoundException;
 import par.financiera.financiera.Repository.CashFlowRepository;
@@ -37,9 +38,8 @@ public class CashFLowServiceImpl  implements ICashFlowService {
     @Override
     public RegisterCashFlowResponseDto registerIncome(RegisterCashFlowRequestDto requestDto) {
         //validar que el request no este vacio
-        if (requestDto.getTitle() == null || requestDto.getTitle().isEmpty()) {
-            throw new IllegalArgumentException("titulo no puede estar vacio");
-        }
+
+        validateRegisterCashFlowRequest(requestDto);
 
         //validar que el usuario existe
         User userExist = this.userRepository.findById(requestDto.getUserId()).orElseThrow(()
@@ -48,11 +48,6 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         //validar que la categoria existe
         Categories categories = this.categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()
                 -> new InvalidRequestException("categoria no encontrada"));
-
-        //validar que la cantidad no puede ser menor a cero
-        if (requestDto.getAmount() <= 0) {
-            throw new InvalidRequestException("amount la cantidad no puede ser menor o igual a cero");
-        }
 
         //sumar la nueva cantidad a la cantidad actual
         //obtener el valor total de el balance del usuario
@@ -68,9 +63,10 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         CashFlow cashFlow = CashFlow.builder()
                 .type(TypeCash.INCOME)
                 .date(LocalDate.now())
+                .categories(categories)
                 .user(userExist)
                 .amount(requestDto.getAmount())
-                .title(requestDto.getTitle())  // Agregado el título que faltaba
+                .title(requestDto.getTitle())
                 .build();
 
         //guardar a traves del repositorio
@@ -84,12 +80,8 @@ public class CashFLowServiceImpl  implements ICashFlowService {
     @Override
     public RegisterCashFlowResponseDto registerExpense(RegisterCashFlowRequestDto requestDto) {
 
-
-        //validar el request
-
-        if(requestDto.getTitle() == null) {
-            throw  new InvalidRequestException("el titulo no puede ser vacio");
-        }
+//validaciones
+        validateRegisterCashFlowRequest(requestDto);
 
 
         //validar que el usuario existe
@@ -99,11 +91,6 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         //validar que la categoria existe
         Categories categories = this.categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()
                 -> new InvalidRequestException("categoria no encontrada"));
-
-        //validar que la cantidad no puede ser menor a cero
-        if (requestDto.getAmount() <= 0) {
-            throw new InvalidRequestException("amount la cantidad no puede ser menor o igual a cero");
-        }
 
         //sumar la nueva cantidad a la cantidad actual
         //obtener el valor total de el balance del usuario
@@ -118,6 +105,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
         //convertir de entidad a Dto
         CashFlow cashFlow = CashFlow.builder()
                 .type(TypeCash.EXPENSES)
+                .categories(categories)
                 .user(userExist)
                 .date(LocalDate.now())
                 .amount(requestDto.getAmount())
@@ -147,7 +135,7 @@ public class CashFLowServiceImpl  implements ICashFlowService {
 
         //buscar expendes del usuario
         if(expenses.isEmpty()){
-            throw  new UserNotFoundException("El usuario no tiene gastos registrados");
+            throw  new CashFlowNotFound("El usuario no tiene gastos registrados");
         }
         return expenses.stream()
                 .map(expense -> GetCashResponse.builder()
@@ -183,10 +171,10 @@ public class CashFLowServiceImpl  implements ICashFlowService {
                 .map(expense -> GetCashResponse.builder()
 
                         .title(expense.getTitle())
-                        .categoryId(expense.getCategories().getId())
+                        .categoryId(expense.getCategories() != null ? expense.getCategories().getId() : null)  // Manejo de null
                         .date(expense.getDate())
                         .amount(expense.getAmount())
-                        .userId(expense.getUser().getId())
+                        .userId(expense.getUser() != null ? expense.getUser().getId() : null)  // Manejo de null
                         .build()
 
                 )
@@ -200,5 +188,27 @@ public class CashFLowServiceImpl  implements ICashFlowService {
                 .amount(cashFlow.getAmount())
                 .type(cashFlow.getType())
                 .build();
+    }
+
+    private void validateRegisterCashFlowRequest(RegisterCashFlowRequestDto requestDto) {
+        // Validar que el request no esté vacío
+        if (requestDto == null) {
+            throw new InvalidRequestException("El request no puede ser nulo");
+        }
+
+        // Validar que la categoría no sea nula
+        if (requestDto.getCategoryId() == null) {
+            throw new InvalidRequestException("La categoría no puede estar vacía");
+        }
+
+        // Validar que el título no sea nulo o vacío
+        if (requestDto.getTitle() == null || requestDto.getTitle().isEmpty()) {
+            throw new InvalidRequestException("El título no puede estar vacío");
+        }
+
+        // Validar que la cantidad no sea menor o igual a cero
+        if (requestDto.getAmount() <= 0) {
+            throw new InvalidRequestException("La cantidad no puede ser menor o igual a cero");
+        }
     }
 }
