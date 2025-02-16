@@ -7,6 +7,7 @@ import par.financiera.financiera.Domain.Dtos.ResponseDto.GoalResponseDto;
 import par.financiera.financiera.Domain.Goals;
 import par.financiera.financiera.Domain.User;
 import par.financiera.financiera.Exceptions.ExceptionClass.InvalidRequestException;
+import par.financiera.financiera.Exceptions.ExceptionClass.ModelNotFounExcceptions;
 import par.financiera.financiera.Exceptions.ExceptionClass.UserNotFoundException;
 import par.financiera.financiera.Repository.IGoalsRepository;
 import par.financiera.financiera.Repository.UserRepository;
@@ -14,6 +15,7 @@ import par.financiera.financiera.Services.IGoalsService;
 import par.financiera.financiera.Utils.GoalStatus;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class GoalsServiceImpl implements IGoalsService {
@@ -68,6 +70,41 @@ public class GoalsServiceImpl implements IGoalsService {
         this.goalsRepository.save(goaslCreate);
 
         return coverToGoalResponseDto(goaslCreate);
+    }
+
+    /**
+     * Metodo para obrener todas las metas registradas
+     * */
+    @Override
+    public List<GoalResponseDto> getAllGoals() {
+
+        List<Goals> allGoals = this.goalsRepository.findAll();
+
+        return allGoals.stream()
+                .map(response -> GoalResponseDto.builder()
+                        .userId(response.getUser().getId())
+                        .title(response.getTitle())
+                        .description(response.getDescription())
+                        .currenAmount(response.getCurrentAmount())
+                        .goalAmount(response.getGoalAmount())
+                        .startDate(response.getStartDate())
+                        .endDate(response.getEndDate())
+                        .status(response.getStatus())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<GoalResponseDto> getGoalsById(Long userId, Long idGoal) {
+
+      User user =   this.userRepository.findById(userId).orElseThrow(()
+           -> new UserNotFoundException(" usuario no existe"));
+
+   Goals goal = this.goalsRepository.findByIdAndUser_Id(userId,idGoal).orElseThrow(()
+        -> new ModelNotFounExcceptions(" el usuario no tiene metas"));
+
+  
+        return null;
     }
 
     GoalResponseDto coverToGoalResponseDto(Goals goal) {

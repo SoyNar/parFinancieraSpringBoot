@@ -1,6 +1,6 @@
 # Configuración del servidor
 server:
-  port: ${PORT:8080} # Render asignará el puerto o usará 8080 por defecto
+  port: ${PORT:8083} # Render asignará el puerto o usará 8080 por defecto
 
 # Configuración de la base de datos
 spring:
